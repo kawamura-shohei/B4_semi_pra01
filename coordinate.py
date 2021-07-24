@@ -44,7 +44,7 @@ class mouseParam:
 
 if __name__ == "__main__":
     #入力画像
-    read = cv2.imread(f"result.jpg")
+    read = cv2.imread(f"20210706_saigaigo_joku_02.jpg")
     
     #表示するWindow名
     window_name = "input window"
