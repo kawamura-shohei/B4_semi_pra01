@@ -1,19 +1,22 @@
+import sys
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from PIL import Image, ImageDraw
 
 def main():
-    mask()
-    gousei()
+    args = sys.argv #コマンドライン引数
+
+    mask(args[1])
+    gousei(args[2])
 
 # 射影変換
-def homography():
-    img_in = cv2.imread('20210704_02_0208.jpg') #鳥瞰視点画像
+def homography(img_in_name):
+    img_in = cv2.imread(img_in_name) #鳥瞰視点画像
 
     # 変換前後の対応点を設定
     p_original = np.float32([[739,600], [345,294], [779,132], [1114,202]]) #鳥瞰視点画像の4点
-    p_trans = np.float32([[677, 508], [347, 597], [163, 122], [522, 84]]) #直下視画像の4点
+    p_trans = np.float32([[837, 416], [553, 492], [431, 86], [750, 76]]) #直下視画像の4点
 
     # 変換マトリクスと射影変換
     M, mask = cv2.findHomography(p_original, p_trans, cv2.RANSAC) #0:すべてのポイントを使用する通常の方法、RANSAC：RANSACベースの堅牢な方法、LMEDS：最小中央値のロバストな方法
@@ -23,9 +26,9 @@ def homography():
     return img_trans
 
 # マスク画像作成
-def mask():
+def mask(img_homography_name):
     # グレースケール化
-    img_gray = cv2.cvtColor(homography(), cv2.COLOR_BGR2GRAY) #BGR2を指定
+    img_gray = cv2.cvtColor(homography(img_homography_name), cv2.COLOR_BGR2GRAY) #BGR2を指定
     cv2.imwrite("result_gray.jpg", img_gray)
 
     ret2, img_binary = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU) #大津の二値化
@@ -42,10 +45,8 @@ def mask():
     img_erosion = cv2.erode(img_delation, kernel, iterations=10)
     cv2.imwrite("result_mask.jpg", img_erosion)
 
-    return img_erosion
-
-def gousei():
-    img_background = Image.open('Wiki.jpg')
+def gousei(img_background_name):
+    img_background = Image.open(img_background_name)
     img_registration = Image.open('result_homography.jpg')
     img_copy = img_background.copy()
 
