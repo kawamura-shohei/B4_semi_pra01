@@ -7,12 +7,12 @@ ret2, img_binary = cv2.threshold(img_gray, 0, 255, cv2.THRESH_OTSU) #大津の�
 print("ret: {}".format(ret2)) #閾値表示
 
 kernel = np.array([
+    [0, 0, 0],
     [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1]
+    [0, 0, 0],
 ], dtype=np.uint8)
-img_delation = cv2.dilate(img_binary, kernel, iterations=3)
-img_erosion = cv2.erode(img_delation, kernel, iterations=3)
-#closing = cv2.morphologyEx(img_binary, cv2.MORPH_CLOSE, kernel)
+img_delation = cv2.dilate(img_binary, kernel, iterations=10)
+img_erosion = cv2.erode(img_delation, kernel, iterations=10)
+
 
 cv2.imwrite("binary_result.jpg", img_erosion)
